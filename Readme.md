@@ -44,7 +44,7 @@ To use the Basket Splitter, you need to follow these steps:
 
 ```java
   BasketSplitter basketSplitter = new BasketSplitter("/absolute/path/to/config/config.json");
-  List<String> basket = Arrays.asList("Product_1", "Product_02", "...");
+List<String> basket = Arrays.asList("Product_1", "Product_02", "...");
 
   System.out.println(basketSplitter.split(basket));
 ```
@@ -53,7 +53,7 @@ To use the Basket Splitter, you need to follow these steps:
 The SetCover problem is NP-hard, meaning there's no known polynomial-time algorithm to solve all instances optimally. However, we can utilize optimization techniques such as Integer Linear Programming (ILP) to address this problem efficiently.
 
 ## Reduction SetCover to ILP
-We can prove that SetCover could be reduced to ILP with following steps:
+We can prove that SetCover could be reduced to ILP with the following steps:
 * Define variables:
 
 $$
@@ -100,8 +100,8 @@ QED
 
 ## MinSetCover
 
-Now when we do know how to reduce SetCover to ILP we can move 
-to ```MinSetCover Problem```. 
+Now when we do know how to reduce SetCover to ILP we can move
+to ```MinSetCover Problem```.
 All we need to do now is to optimize value of
 
 $$
@@ -109,7 +109,7 @@ min(\sum_{i=1}^{n} z_i)
 $$
 
 With this defined optimization problem, we can employ various optimization algorithms to find an acceptable solution.
-For this task used algorithm was `The Two-Phase Simplex Method`
+For this, we use `The Two-Phase Simplex Method`.
 
 # Dependencies
 * ``` implementation 'com.google.code.gson:gson:2.10.1' ```

@@ -21,10 +21,7 @@ public class BasketSplitter {
     /**
      * Constructs a BasketSplitter instance with the given configuration file path.
      * Configuration file contain json data necessary to split items into sets.
-     * JSON format:
-     * {
-     *     "Product_01": ["Shipment_1", "Shipment_02"]
-     * }
+     * Accepted format: {"Product_01": ["Shipment_1", "Shipment_02"], }
      *
      * @param absolutePathToConfigFile The absolute path to the configuration file.
      */
@@ -46,8 +43,7 @@ public class BasketSplitter {
 
         List<String> validItems = new ArrayList<>();
 
-        // Sieve invalid products.
-        // In such situation we just ignore invalid products, since it is not our problem to provide item we do not have
+        // Sieve invalid products. Ignore invalid products.
         for(String item : items)
             if(products.containsKey(item))
                 validItems.add(item);
@@ -57,15 +53,14 @@ public class BasketSplitter {
         if(items.isEmpty())
             return new HashMap<>();
 
-        // initialize deliverySet to contain only products' deliveries
+        // Initialize new set with all delivery options from our items list
         Set<String> deliverySet = items.stream()
                 .map(products::get)
                 .collect(HashSet::new, Set::addAll, Set::addAll);
 
         List<String> deliveryMethods = new ArrayList<>(deliverySet);
 
-        // Generate basic utility for SetCover. MinSetCover will contain all
-        // necessary info about deliveries option, and products they can deliver.
+        // MinSetCover will contain al; necessary info about deliveries option and products they can deliver.
         List<Set<Integer>> minSetCover = Stream.generate(HashSet<Integer>::new)
                 .limit(deliverySet.size())
                 .collect(Collectors.toList());
@@ -86,12 +81,11 @@ public class BasketSplitter {
         for(int i = minCover.size() -1 ; i >=0 ; i--)
             minCoverReversed.add(minCover.get(i));
 
-        // Simplest way to avoid duplicates && add new layer of security is to mark products
-        // already taken into account.
+        // Avoid duplicates && add new layer of security by marking already covered products
         List<Integer> usedProducts = new ArrayList<>(Collections.nCopies(items.size(), 0));
         HashMap<String, List<String >> result = new HashMap<>();
 
-        // Map Creating
+        // Result formatting
         for(Integer i : minCoverReversed) {
             String deliveryMethod = deliveryMethods.get(i);
             List<String> finalProducts = new ArrayList<>();
@@ -112,6 +106,12 @@ public class BasketSplitter {
     }
 
 
+    /**
+     * Given path to config file parse all data necessary for BasketSplitter.
+     *
+     * @param fileName The JSON file with products and delivery option
+     * @return A map of products with its delivery options.
+     */
     private HashMap<String, List<String>> loadMapFromFile(String fileName) {
         HashMap<String, List<String>> resultMap = new HashMap<>();
 
@@ -130,8 +130,9 @@ public class BasketSplitter {
             for (String key : jsonObject.keySet()) {
                 JsonElement jsonElements = jsonObject.get(key);
 
+                // If one element is in wrong format just ignore it
                 if(!jsonElements.isJsonArray()) {
-                    throw new JsonSyntaxException("Invalid json format");
+                    continue;
                 }
 
                 JsonArray jsonArray = jsonObject.getAsJsonArray(key);
