@@ -52,8 +52,8 @@ To use the Basket Splitter, you need to follow these steps:
 # How it works
 The SetCover problem is NP-hard, meaning there's no known polynomial-time algorithm to solve all instances optimally. However, we can utilize optimization techniques such as Integer Linear Programming (ILP) to address this problem efficiently.
 
-## Reduction to ILP
-
+## Reduction SetCover to ILP
+We can prove that SetCover could be reduced to ILP with following steps:
 * Define variables:
 
 $$
@@ -96,9 +96,13 @@ $$
 \text{ ,where } n \text{ is the number of delivery options and } k \text{ is the maximum number of sets used.}
 $$
 
+QED
+
 ## MinSetCover
-This is classic reduction of SetCover Problem to ILP.
-Now to get MinCoverSet, we need to optimize the value of
+
+Now when we do know how to reduce SetCover to ILP we can move 
+to ```MinSetCover Problem```. 
+All we need to do now is to optimize value of
 
 $$
 min(\sum_{i=1}^{n} z_i)
