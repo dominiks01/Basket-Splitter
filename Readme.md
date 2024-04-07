@@ -1,10 +1,37 @@
 # Basket Splitter
 
-The `Basket Splitter` class is responsible for splitting a list
-of items into delivery sets based on a provided configuration file
+The Basket Splitter class is responsible for splitting a list of items into delivery sets based on a provided configuration file.
 
 # Installation
-To install the Basket Splitter, please follow the instructions provided in the Installation Guide.
+
+For creating a fat JAR, a Gradle task was defined:
+```
+jar {
+  manifest {
+      attributes "Main-Class": "org.example.BasketSplitter"
+  }
+
+  from {
+      configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
+```
+
+To build with a fat JAR, execute the following command in the main directory:
+
+```
+./gradlew jar
+```
+
+To add the dependency in Gradle, use the following:
+
+```
+dependencies {
+  [...]
+
+  implementation files('<Path>/<To>/<Jar>/Ocado-1.0-SNAPSHOT.jar')
+}
+```
 
 # Usage
 To use the Basket Splitter, you need to follow these steps:
@@ -13,6 +40,14 @@ To use the Basket Splitter, you need to follow these steps:
 2)  Create an instance of the Basket Splitter.
 3)  Provide the list of items and the configuration file to the Basket Splitter.
 4)  Call the appropriate method to split the items into delivery sets.
+
+
+```java
+  BasketSplitter basketSplitter = new BasketSplitter("/absolute/path/to/config/config.json");
+  List<String> basket = Arrays.asList("Product_1", "Product_02", "...");
+
+  System.out.println(basketSplitter.split(basket));
+```
 
 # How it works
 The SetCover problem is NP-hard, meaning there's no known polynomial-time algorithm to solve all instances optimally. However, we can utilize optimization techniques such as Integer Linear Programming (ILP) to address this problem efficiently.
@@ -63,10 +98,21 @@ $$
 
 ## MinSetCover 
 This is classic reduction of SetCover Problem to ILP.
-Now to get MinCoverSet we need to optimize value of
+Now to get MinCoverSet, we need to optimize the value of 
 
 $$
 min(\sum_{i=1}^{n} z_i)
 $$
 
-With this defined optimization problem, we can employ various optimization algorithms to find an acceptable solution
+With this defined optimization problem, we can employ various optimization algorithms to find an acceptable solution.
+For this task used algorithm was `The Two-Phase Simplex Method`
+
+# Dependencies 
+* ``` implementation 'com.google.code.gson:gson:2.10.1' ```
+  
+   A Java serialization/deserialization library to convert Java Objects into JSON and back 
+
+* ``` implementation 'org.apache.commons:commons-math3:3.6.1' ```
+
+  The Apache Commons Math project is a library of lightweight, self-contained mathematics and statistics components 
+
