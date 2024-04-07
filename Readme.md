@@ -1,5 +1,4 @@
 # Basket Splitter
-MinSetCover Problem
 
 The `Basket Splitter` class is responsible for splitting a list
 of items into delivery sets based on a provided configuration file
@@ -20,9 +19,17 @@ The SetCover problem is NP-hard, meaning there's no known polynomial-time algori
 
 ## Reduction to ILP
 
-* $$
-\text{Let } Y = \{ Y_1, Y_2, \ldots, Y_n \} \\ \text{ represent the delivery options, where } i \text{ represents the } i \text{th delivery option. }
+* Define variables:
+  
+$$ 
+  \text{Let } Y = \{ Y_1, Y_2, \ldots, Y_n \} \\ \text{ represent the delivery options, where } i \text{ represents the } i \text{th delivery option. } 
 $$
+
+  
+$$ 
+  \text{Let } X = \{ x_1, x_2, \ldots, x_n \} \\ \text{ represent the basket, where } i \text{ represents the } i \text{th item. } 
+$$
+
 
 * Introduce new variables:
 
@@ -41,20 +48,22 @@ $$
 \forall x_j : \sum_{i : x_j \in Y_i} z_i \geq 1
 $$
 
-* subject to:
+* Boundary for ILP:
 
 $$
 \quad \forall i : 0 \leq z_i \leq 1,
 $$
 
-*   The condition of deliveries: 
+* The condition of deliveries: 
 
 $$
 \sum_{i=1}^{n} z_i \geq k
 \text{ ,where } n \text{ is the number of delivery options and } k \text{ is the maximum number of sets used.}
 $$
 
-*    Now, the objective is to minimize the value:
+## MinSetCover 
+This is classic reduction of SetCover Problem to ILP.
+Now to get MinCoverSet we need to optimize value of
 
 $$
 min(\sum_{i=1}^{n} z_i)
