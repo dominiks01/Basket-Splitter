@@ -10,23 +10,49 @@ import java.util.stream.Stream;
 
 import static org.example.MinSetCoverILP.solveSetCoverILP;
 
+/**
+ * The BasketSplitter class is responsible for splitting a list
+ * of items into delivery sets.
+ */
 public class BasketSplitter {
     private final ClassLoader classLoader = BasketSplitter.class.getClassLoader();
     private final HashMap<String, List<String>> products;
 
+    /**
+     * Constructs a BasketSplitter instance with the given configuration file path.
+     * Configuration file contain json data necessary to split items into sets.
+     * JSON format:
+     * {
+     *     "Product_01": ["Shipment_1", "Shipment_02"]
+     * }
+     *
+     * @param absolutePathToConfigFile The absolute path to the configuration file.
+     */
     public BasketSplitter(String absolutePathToConfigFile) {
         products = loadMapFromFile(absolutePathToConfigFile);
     }
 
+
+    /**
+     * Splits the given basket of items into delivery sets based on the configured options.
+     *
+     * @param items The list of items to be split into delivery sets.
+     * @return A map of delivery sets containing items.
+     */
     public Map<String, List<String>> split(List<String> items ){
         if(items == null || products == null) {
             return new HashMap<>();
         }
 
+        List<String> validItems = new ArrayList<>();
+
         // Sieve invalid products.
-        // In such situation we just ignore invalid products, since it is not our problem to provide
-        // item we do not have.
-        items.retainAll(products.keySet());
+        // In such situation we just ignore invalid products, since it is not our problem to provide item we do not have
+        for(String item : items)
+            if(products.containsKey(item))
+                validItems.add(item);
+
+        items = validItems;
 
         if(items.isEmpty())
             return new HashMap<>();
@@ -54,7 +80,11 @@ public class BasketSplitter {
         // Now when we have optimized deliveries options we can get delivery with most products
         Comparator<Integer> byNumberOfElements = Comparator.comparingInt(i -> minSetCover.get(i).size());
         minCover.sort(byNumberOfElements);
-        minCover = minCover.reversed();
+
+        List<Integer> minCoverReversed = new ArrayList<>();
+
+        for(int i = minCover.size() -1 ; i >=0 ; i--)
+            minCoverReversed.add(minCover.get(i));
 
         // Simplest way to avoid duplicates && add new layer of security is to mark products
         // already taken into account.
@@ -62,7 +92,7 @@ public class BasketSplitter {
         HashMap<String, List<String >> result = new HashMap<>();
 
         // Map Creating
-        for(Integer i : minCover) {
+        for(Integer i : minCoverReversed) {
             String deliveryMethod = deliveryMethods.get(i);
             List<String> finalProducts = new ArrayList<>();
 
